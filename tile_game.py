@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
+from tkinter import font
 import random
 import math
 
@@ -7,10 +8,11 @@ class App:
     def __init__(self, root):
         self.root = root
         self.root.title("Herní konfigurátor")
-        self.root.geometry("800x600")
-        self.tilesize = 30
+        self.root.geometry("1600x900")
+        self.tilesize = 60
         self.tiles = {}
         self.player_colors = ["blue", "red", "yellow", "green"]
+        self.player_names = ["Faolin", "Nalia", "Kappa", "Teemur"]
         self.enemy_color = "grey"
         self.rows = {}
         self.cols = {}
@@ -18,11 +20,14 @@ class App:
         self.selected_o = {}
         self.selected_tile = []
 
+
         self.setup_layout()
         self.create_left_panel()
         self.create_right_panel()
         self.create_grid_input_section()
         self.player_numbers()
+        self.enemy_numbers()
+        
 
 
     def setup_layout(self):
@@ -58,6 +63,9 @@ class App:
         try:
             rows = int(self.entry_x.get())
             cols = int(self.entry_y.get())
+            if rows < 4 and cols < 2:
+                messagebox.showinfo("Error", "Řádky musí být minimálně 4 a sloupce 2")
+                return
         except ValueError:
             print("Zadej platná čísla")
             return
@@ -69,13 +77,16 @@ class App:
 
         inner_frame = tk.Frame(self.right_frame, bg="white")
         inner_frame.place(relx=0.5, rely=0.5, anchor="center")
-
+        
+        
         for i in range(rows):
             for j in range(cols):
                 tile = tk.Label(inner_frame, width=4, height=2, bg="white", relief="ridge", borderwidth=3, padx=self.tilesize, pady=self.tilesize)
                 tile.grid(row=i, column=j, padx=1, pady=1)
                 tile.bind("<Button-1>", lambda e, r=i, c=j: self.on_tile_click(r, c))
                 self.tiles[(i,j)] = tile
+        
+
 
 
     def player_numbers(self):
@@ -89,39 +100,75 @@ class App:
         tk.Button(self.left_frame, text="OK", command=self.random_players_placement).pack()
         self.selected_o = selected_option
 
+
+    def enemy_numbers(self):
+        tk.Label(self.left_frame, text="Počet nepřátel:").pack(pady=(10, 0),)
+        self.entry_enemy_no = tk.Entry(self.left_frame)
+        self.entry_enemy_no.pack()
+
+        tk.Button(self.left_frame, text="Umísti nepřátele", command=self.random_enemy_placement).pack(pady=10)            
+
     def on_tile_click(self, row, col):
         bg = self.tiles[(row,col)].cget("bg")
-        if bg != "white":
-            a = self.tiles[(row,col)].config(highlightbackground="blue",
-            highlightthickness=0,
-            borderwidth=3,
-            relief="solid")
-            self.selected_tile = [self.tiles[(row,col)].cget("bg"), row, col]
+        play_names = self.tiles[(row,col)].cget("text")
+        if bg != "white" and not self.selected_tile:
+            self.tiles[(row,col)].config(highlightbackground="blue", highlightthickness=0, borderwidth=3,relief="solid")
+            self.selected_tile = [bg, row, col, play_names]
             print(self.selected_tile)
-        #elif self.selected_tile != {}:
-            #stored_bg = self.selected_tile
-            #self.tiles[(row,col)].config(bg=stored_bg)
-            #self.selected_tile = {}
+        elif self.selected_tile and bg == "white":
+            stored_bg = self.selected_tile[0]
+            former_row = self.selected_tile[1]
+            former_col = self.selected_tile[2]
+            stored_play_names = self.selected_tile[3]
+            self.tiles[(row,col)].config(bg=stored_bg, text=stored_play_names)
+            self.tiles[(former_row,former_col)].config(bg="white",highlightbackground="white",borderwidth=3,relief="ridge",text="")
+            self.selected_tile = []
+        elif self.selected_tile and bg != "white":
+            return
 
     def random_players_placement(self):
         try:
             for x in range(self.rows):
-                for y in range(self.cols):
+                for y in range(math.ceil(self.cols/2)):
                     if self.tiles[(x,y)].cget("bg") != 'white':
-                        self.tiles[(x,y)].config(bg='white')
+                        self.tiles[(x,y)].config(bg='white', text='')
 
             for i in range(int(self.selected_o.get())):
                 while True: 
                     random_x = random.randint(0, self.rows-1)
                     random_y = random.randint(0, math.ceil(self.cols/2)-1)
                     if self.tiles[(random_x,random_y)].cget("bg") == 'white':
-                        self.tiles[(random_x,random_y)].config(bg=self.player_colors[i])
+                        self.tiles[(random_x,random_y)].config(bg=self.player_colors[i],text=self.player_names[i])
                         break
 
         except (TypeError,ValueError):
             return
         
-                   
+    def random_enemy_placement(self):
+        if int(self.entry_enemy_no.get()) > ((math.floor(self.cols/2))*(self.rows)):
+            messagebox.showinfo("error", "moc nepřátel, zkus méně")
+            return
+        else:
+            try:
+                for x in range(self.rows):
+                    for y in range(math.ceil(self.cols/2), self.cols):
+                        if self.tiles[(x,y)].cget("bg") != 'white':
+                            self.tiles[(x,y)].config(bg='white', text='')
+
+                for i in range(int(self.entry_enemy_no.get())):
+                    while True: 
+                        random_x_enemy = random.randint(0, self.rows-1)
+                        random_y_enemy = random.randint(math.ceil(self.cols/2), self.cols-1)
+                        if self.tiles[(random_x_enemy,random_y_enemy)].cget("bg") == 'white':
+                            self.tiles[(random_x_enemy,random_y_enemy)].config(bg=self.enemy_color, text="Enemy no. " + str(i+1))
+                            
+                            break
+
+            except (TypeError,ValueError):
+                return        
+
+
+
     
     def destroy_grid(self):
         if self.right_frame.winfo_children():
