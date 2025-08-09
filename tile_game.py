@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 import random
+import math
 
 class App:
     def __init__(self, root):
@@ -9,7 +10,7 @@ class App:
         self.root.geometry("800x600")
         self.tilesize = 30
         self.tiles = {}
-        self.player_colors = ["white", "red", "yellow", "green"]
+        self.player_colors = ["blue", "red", "yellow", "green"]
         self.enemy_color = "grey"
         self.rows = {}
         self.cols = {}
@@ -96,11 +97,18 @@ class App:
         
     def random_players_placement(self):
         try:
-            random_x = random.randint(1, self.rows - 1)
-            random_y = random.randint(1, self.cols - 1)
-            self.tiles[(random_x,random_y)].config(bg="red")
-            print(self.selected_o.get())
-        except TypeError:
+            
+            for i in range(int(self.selected_o.get())):
+                while True: 
+                    random_x = random.randint(0, self.rows-1)
+                    random_y = random.randint(0, math.ceil(self.cols/2)-1)
+                    if self.tiles[(random_x,random_y)].cget("bg") == 'white':
+                        self.tiles[(random_x,random_y)].config(bg=self.player_colors[i])
+                        break
+                    
+                  
+
+        except (TypeError,ValueError):
             return
         
                    
