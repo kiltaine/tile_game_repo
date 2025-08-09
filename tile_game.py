@@ -16,6 +16,7 @@ class App:
         self.cols = {}
         self.no_of_players = {}
         self.selected_o = {}
+        self.selected_tile = []
 
         self.setup_layout()
         self.create_left_panel()
@@ -71,7 +72,7 @@ class App:
 
         for i in range(rows):
             for j in range(cols):
-                tile = tk.Label(inner_frame, width=4, height=2, bg="white", relief="ridge", borderwidth=1, padx=self.tilesize, pady=self.tilesize)
+                tile = tk.Label(inner_frame, width=4, height=2, bg="white", relief="ridge", borderwidth=3, padx=self.tilesize, pady=self.tilesize)
                 tile.grid(row=i, column=j, padx=1, pady=1)
                 tile.bind("<Button-1>", lambda e, r=i, c=j: self.on_tile_click(r, c))
                 self.tiles[(i,j)] = tile
@@ -91,13 +92,24 @@ class App:
     def on_tile_click(self, row, col):
         bg = self.tiles[(row,col)].cget("bg")
         if bg != "white":
-            self.tiles[(row,col)].config(bg="white")
-        else:
-            self.tiles[(row,col)].config(bg="red")
-        
+            a = self.tiles[(row,col)].config(highlightbackground="blue",
+            highlightthickness=0,
+            borderwidth=3,
+            relief="solid")
+            self.selected_tile = [self.tiles[(row,col)].cget("bg"), row, col]
+            print(self.selected_tile)
+        #elif self.selected_tile != {}:
+            #stored_bg = self.selected_tile
+            #self.tiles[(row,col)].config(bg=stored_bg)
+            #self.selected_tile = {}
+
     def random_players_placement(self):
         try:
-            
+            for x in range(self.rows):
+                for y in range(self.cols):
+                    if self.tiles[(x,y)].cget("bg") != 'white':
+                        self.tiles[(x,y)].config(bg='white')
+
             for i in range(int(self.selected_o.get())):
                 while True: 
                     random_x = random.randint(0, self.rows-1)
@@ -105,8 +117,6 @@ class App:
                     if self.tiles[(random_x,random_y)].cget("bg") == 'white':
                         self.tiles[(random_x,random_y)].config(bg=self.player_colors[i])
                         break
-                    
-                  
 
         except (TypeError,ValueError):
             return
