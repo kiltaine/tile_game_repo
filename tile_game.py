@@ -83,7 +83,7 @@ class App:
         
         for i in range(rows):
             for j in range(cols):
-                tile = tk.Label(inner_frame, width=4, height=2, bg="white", relief="ridge", borderwidth=3, padx=self.tilesize, pady=self.tilesize)
+                tile = tk.Label(inner_frame, width=4, height=2, bg="white", relief="ridge", borderwidth=3, padx=self.tilesize, pady=self.tilesize, font=("Comic Sans MS", 15, "bold"))
                 tile.grid(row=i, column=j, padx=1, pady=1)
                 tile.bind("<Button-1>", lambda e, r=i, c=j: self.on_tile_click(r, c))
                 self.tiles[(i,j)] = tile
