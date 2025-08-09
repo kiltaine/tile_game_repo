@@ -13,9 +13,11 @@ class App:
         self.tiles = {}
         self.player_colors = ["blue", "red", "yellow", "green"]
         self.player_names = ["Faolin", "Nalia", "Kappa", "Teemur"]
+        self.enemy_weapons = ["1k2", "1k4", "1k6", "1k8", "1k10"]
+        self.enemy_armor = ["žádná", "lehká", "střední", "těžká"]
         self.enemy_color = "grey"
-        self.rows = {}
-        self.cols = {}
+        self.rows = 0
+        self.cols = 0
         self.no_of_players = {}
         self.selected_o = {}
         self.selected_tile = []
@@ -160,7 +162,8 @@ class App:
                         random_x_enemy = random.randint(0, self.rows-1)
                         random_y_enemy = random.randint(math.ceil(self.cols/2), self.cols-1)
                         if self.tiles[(random_x_enemy,random_y_enemy)].cget("bg") == 'white':
-                            self.tiles[(random_x_enemy,random_y_enemy)].config(bg=self.enemy_color, text="Enemy no. " + str(i+1))
+                            self.tiles[(random_x_enemy,random_y_enemy)].config(bg=self.enemy_color, text="Enemy no. " + str(i+1) + "\n" + self.enemy_weapons[random.randint(0, len(self.enemy_weapons)-1)]
+                                        + "\n" + self.enemy_armor[random.randint(0, len(self.enemy_armor)-1)])
                             
                             break
 
