@@ -34,7 +34,7 @@ class App:
 
     def setup_layout(self):
         self.root.columnconfigure(0, weight=0, minsize=20)
-        self.root.columnconfigure(2, weight=7)
+        self.root.columnconfigure(1, weight=7)
         self.root.rowconfigure(0, weight=1)
 
     def create_left_panel(self):
@@ -47,7 +47,7 @@ class App:
 
     def create_right_panel(self):
         self.right_frame = tk.Frame(self.root, bg="white")
-        self.right_frame.grid(row=0, column=2, sticky="nsew")
+        self.right_frame.grid(row=0, column=1, sticky="nsew")
 
 
     def create_grid_input_section(self):
