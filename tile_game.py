@@ -33,19 +33,21 @@ class App:
 
 
     def setup_layout(self):
-        self.root.columnconfigure(0, weight=1)
-        self.root.columnconfigure(1, weight=7)
+        self.root.columnconfigure(0, weight=0, minsize=20)
+        self.root.columnconfigure(2, weight=7)
         self.root.rowconfigure(0, weight=1)
 
     def create_left_panel(self):
-        self.left_frame = tk.Frame(self.root, bg="lightgray")
-        self.left_frame.grid(row=0, column=0, sticky="nsew")
+        self.left_frame = tk.Frame(self.root, bg="lightgray",width=150)
+        self.left_frame.grid(row=0, column=0, sticky="ns")
         self.left_frame.grid_propagate(False)
-        self.left_frame.config(width=150)
+        self.left_frame.pack_propagate(False)
+
+ 
 
     def create_right_panel(self):
         self.right_frame = tk.Frame(self.root, bg="white")
-        self.right_frame.grid(row=0, column=1, sticky="nsew")
+        self.right_frame.grid(row=0, column=2, sticky="nsew")
 
 
     def create_grid_input_section(self):
