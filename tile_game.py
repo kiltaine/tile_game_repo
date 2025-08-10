@@ -21,6 +21,8 @@ class App:
         self.no_of_players = {}
         self.selected_o = {}
         self.selected_tile = []
+        self.enemy_names = []
+        self.enemy_coordinates = []
 
 
         self.setup_layout()
@@ -29,7 +31,7 @@ class App:
         self.create_grid_input_section()
         self.player_numbers()
         self.enemy_numbers()
-        
+        self.combat_button()
 
 
     def setup_layout(self):
@@ -38,10 +40,11 @@ class App:
         self.root.rowconfigure(0, weight=1)
 
     def create_left_panel(self):
-        self.left_frame = tk.Frame(self.root, bg="lightgray",width=150)
+        self.left_frame = tk.Frame(self.root, bg="lightgray",width=250)
         self.left_frame.grid(row=0, column=0, sticky="ns")
         self.left_frame.grid_propagate(False)
         self.left_frame.pack_propagate(False)
+
 
  
 
@@ -51,14 +54,19 @@ class App:
 
 
     def create_grid_input_section(self):
-        tk.Label(self.left_frame, text="Řádky (X):").pack(pady=(10, 0),)
-        self.entry_x = tk.Entry(self.left_frame)
-        self.entry_x.pack()
+        frame_for_entries = tk.Frame(self.left_frame, bg="lightgray")    
+        frame_for_entries.pack(pady=5)
+
+        label_entry_x = tk.Label(frame_for_entries, text="Řádky (X):")
+        label_entry_x.grid(row=0, column=0, padx=2)
+        self.entry_x = tk.Entry(frame_for_entries, width=10)
+        self.entry_x.grid(row=1, column=0, padx=2)
         
 
-        tk.Label(self.left_frame, text="Sloupce (Y):").pack(pady=(10, 0),)
-        self.entry_y = tk.Entry(self.left_frame)
-        self.entry_y.pack()
+        label_entry_y = tk.Label(frame_for_entries, text="Sloupce (Y):")
+        label_entry_y.grid(row=0, column=1, padx=2)
+        self.entry_y = tk.Entry(frame_for_entries, width=10)
+        self.entry_y.grid(row=1, column=1, padx=2)
 
         tk.Button(self.left_frame, text="Vytvořit pole", command=self.create_grid).pack(pady=10)
         tk.Button(self.left_frame, text="Vymaž pole", command=self.destroy_grid).pack(pady=10)
@@ -126,7 +134,13 @@ class App:
             stored_play_names = self.selected_tile[3]
             self.tiles[(row,col)].config(bg=stored_bg, text=stored_play_names)
             self.tiles[(former_row,former_col)].config(bg="white",highlightbackground="white",borderwidth=3,relief="ridge",text="")
+            self.new_tile = [bg, row, col, stored_play_names]
+            print(self.new_tile)
+            if self.new_tile[0] == "white":
+                self.enemy_coordinates[0] = [(row,col)]
             self.selected_tile = []
+
+
         elif self.selected_tile and bg != "white":
             return
 
@@ -166,11 +180,30 @@ class App:
                         if self.tiles[(random_x_enemy,random_y_enemy)].cget("bg") == 'white':
                             self.tiles[(random_x_enemy,random_y_enemy)].config(bg=self.enemy_color, text="Enemy no. " + str(i+1) + "\n" + self.enemy_weapons[random.randint(0, len(self.enemy_weapons)-1)]
                                         + "\n" + self.enemy_armor[random.randint(0, len(self.enemy_armor)-1)])
-                            
+                            self.enemy_names.append("Enemy no." + str(i+1))
+                            self.enemy_coordinates.append([random_x_enemy, random_y_enemy])
                             break
 
             except (TypeError,ValueError):
                 return        
+
+    def combat_button(self):
+        tk.Button(self.left_frame, text="Souboj", command=self.combat_window).pack(pady=10)
+
+
+    def combat_window(self):
+        combat = tk.Toplevel(self.root)
+        combat.title("Combat screen")
+        combat.geometry("600x400")
+        
+        def label_test():
+            combat_label = tk.Label(combat,text=self.enemy_coordinates, bg="yellow")
+            combat_label.pack(pady=10)
+            
+        
+        label_test()
+
+        
 
 
 
