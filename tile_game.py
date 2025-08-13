@@ -97,6 +97,7 @@ class App:
                 tile.grid(row=i, column=j, padx=1, pady=1)
                 tile.bind("<Button-1>", lambda e, r=i, c=j: self.on_tile_click(r, c))
                 tile.bind("<Button-3>", lambda e, r=i, c=j: self.on_tile_right_click(r, c))
+                tile.bind("<Double-Button-1>", lambda e, r=i, c=j: self.enemy_inventory(r, c))
                 self.tiles[(i,j)] = tile
         
 
@@ -146,8 +147,23 @@ class App:
             return
 
     def on_tile_right_click(self, row, col):
-        self.tiles[(row,col)].config(bg="white",text="")
+        tile = self.tiles[(row,col)]
+        text = tile.cget("text")
+        bg = tile.cget("bg")
 
+        if text == "Dead":
+            tile.config(bg="white",text="")
+            return
+        elif text != "Dead" and bg == "grey":
+            tile.config(bg=bg,text="Dead")
+            return
+        elif text != "Dead" and bg not in ["grey","white"] :
+            msg_question = messagebox.askquestion("is the player dead?","Is the player dead?")
+            if msg_question == 'yes':
+                tile.config(bg=bg,text="Dead")
+            else:
+                tile.config(bg=bg,text="Unconscious")
+            return
 
 
     def random_players_placement(self):
@@ -193,6 +209,23 @@ class App:
             except (TypeError,ValueError):
                 return        
 
+    def enemy_inventory(self, row, col):
+        if self.tiles[(row,col)].cget("bg") == "white":
+            return
+        elif self.tiles[(row,col)].cget("bg") == "grey":
+            inventory = tk.Toplevel(self.root)
+            inventory.title("Combat screen")
+            inventory.geometry("300x600")
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
     def combat_button(self):
         tk.Button(self.left_frame, text="Souboj", command=self.combat_window).pack(pady=10)
 
