@@ -11,8 +11,8 @@ class App:
         self.root.geometry("1600x900")
         self.tilesize = 60
         self.tiles = {}
-        self.player_colors = ["blue", "red", "yellow", "green"]
-        self.player_names = ["Faolin", "Nalia", "Kappa", "Teemur"]
+        self.player_colors = ["blue", "red", "yellow", "green","brown", "brown", "brown", "brown"]
+        self.player_names = ["Faolin", "Nalia", "Kappa", "Teemur", "pet no.1","pet no.2","pet no.3","pet no.4"]
         self.enemy_weapons = ["1k2", "1k4", "1k6", "1k8", "1k10"]
         self.enemy_armor = ["žádná", "lehká", "střední", "těžká"]
         self.enemy_color = "grey"
@@ -104,7 +104,7 @@ class App:
 
 
     def player_numbers(self):
-        no_players = [1,2,3,4]
+        no_players = [1,2,3,4,5,6,7,8]
         selected_option = tk.StringVar(value=no_players[0])
         tk.Label(self.left_frame, text="Počet hráčů").pack(pady=(10, 5),)
         self.entry_no_players = tk.OptionMenu(self.left_frame,selected_option,*no_players)
@@ -138,8 +138,6 @@ class App:
             self.tiles[(former_row,former_col)].config(bg="white",highlightbackground="white",borderwidth=3,relief="ridge",text="")
             self.new_tile = [bg, row, col, stored_play_names]
             print(self.new_tile)
-            if self.new_tile[0] == "white":
-                self.enemy_coordinates[0] = [(row,col)]
             self.selected_tile = []
 
 
@@ -214,8 +212,28 @@ class App:
             return
         elif self.tiles[(row,col)].cget("bg") == "grey":
             inventory = tk.Toplevel(self.root)
-            inventory.title("Combat screen")
+            inventory.title("Inventory")
             inventory.geometry("300x600")
+            inventory.columnconfigure(0, weight=0, minsize=300)
+            inventory.rowconfigure(0, weight=0)
+            frame = tk.Frame(inventory, width=300)
+            frame.grid(row=0, column=0)
+            
+            self.selected_armor = tk.StringVar(value=self.enemy_armor[0])
+            tk.Label(frame, text="enemy armor").pack(pady=(10, 5),)
+            self.selected_armor = tk.OptionMenu(frame,self.selected_armor,*self.enemy_armor)
+            self.selected_armor.pack(pady = 10)
+        
+            self.changing_apparel = []
+            self.changing_apparel.append(self.tiles[(row,col)].cget("text").split("\n")[1])
+            
+       
+    
+            def change_apparel():
+                print(self.selected_armor)
+
+            tk.Button(frame, text="OK",command=change_apparel).pack(pady= 10)  
+        
 
     
     
